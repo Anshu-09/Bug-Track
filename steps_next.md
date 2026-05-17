@@ -57,22 +57,45 @@ Feed this file to the AI assistant to resume from where we left off.
   - Custom method: findByEmail(String email)
 - Pushed to GitHub
 
+### Step 6 - Auth Module
+- Created `src/main/java/com/bugtrack/auth/JwtUtil.java`
+  - generateToken(email) → creates JWT token
+  - extractEmail(token) → reads email from token
+  - isTokenValid(token) → checks token expiry and signature
+- Created `src/main/java/com/bugtrack/auth/AuthRequest.java`
+  - DTO for incoming request body: name, email, password
+- Created `src/main/java/com/bugtrack/auth/AuthResponse.java`
+  - DTO for outgoing response body: token
+- Created `src/main/java/com/bugtrack/auth/AuthService.java`
+  - register() → BCrypt hash password, save user, return JWT
+  - login() → verify password with BCrypt, return JWT
+- Created `src/main/java/com/bugtrack/auth/AuthController.java`
+  - POST /auth/register
+  - POST /auth/login
+- Pushed to GitHub
+
 ---
 
-## Next Step → Step 6: Auth Module
+## Next Step → Step 7: SecurityConfig
 
-Build the full Auth module inside `src/main/java/com/bugtrack/auth/`:
+Create two files inside `src/main/java/com/bugtrack/config/`:
 
-Files to create in order:
-1. `JwtUtil.java` → generates and validates JWT tokens using the secret from application.properties
-2. `AuthRequest.java` → DTO (Data Transfer Object) for login/register request body { name, email, password }
-3. `AuthResponse.java` → DTO for response body { token }
-4. `AuthService.java` → handles register (BCrypt hash password, save user) and login (validate password, return JWT)
-5. `AuthController.java` → REST endpoints: POST /auth/register and POST /auth/login
+1. `JwtFilter.java`
+   - Extends OncePerRequestFilter
+   - Reads Authorization header from every request
+   - Extracts and validates JWT token
+   - Sets authenticated user in Spring Security context
 
-After Auth module → Step 7: SecurityConfig.java
-- Configure Spring Security to allow /auth/** without JWT
-- Protect all other endpoints with JWT filter
+2. `SecurityConfig.java`
+   - Disable CSRF (not needed for REST APIs)
+   - Allow /auth/register and /auth/login without token
+   - Protect all other endpoints with JWT
+   - Register JwtFilter in the security filter chain
+
+Before creating files, run:
+```
+mkdir src/main/java/com/bugtrack/config
+```
 
 ---
 
@@ -81,8 +104,8 @@ After Auth module → Step 7: SecurityConfig.java
 - [x] README
 - [x] Spring Boot setup + PostgreSQL config
 - [x] User entity + UserRepository
-- [ ] Auth module (JwtUtil, AuthRequest, AuthResponse, AuthService, AuthController) ← NEXT
-- [ ] SecurityConfig.java
+- [x] Auth module (JwtUtil, AuthRequest, AuthResponse, AuthService, AuthController)
+- [ ] SecurityConfig + JwtFilter ← NEXT
 - [ ] Project entity + InviteCodeGenerator
 - [ ] ProjectMember entity + join via invite code
 - [ ] Issue entity + CRUD + algorithm classes (IssueSorter, IssueSearchEngine, StatusStateMachine, RoundRobinAssigner)
