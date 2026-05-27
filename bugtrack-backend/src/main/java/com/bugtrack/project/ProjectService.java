@@ -4,6 +4,7 @@ import com.bugtrack.user.User;
 import com.bugtrack.user.UserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -28,6 +29,7 @@ public class ProjectService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
+    @Transactional
     public Project createProject(String name) {
         User currentUser = getCurrentUser();
         Project project = new Project();
