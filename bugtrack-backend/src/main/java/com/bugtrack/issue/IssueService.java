@@ -1,5 +1,6 @@
 package com.bugtrack.issue;
 
+import com.bugtrack.activity.ActivityService;
 import com.bugtrack.member.MemberRepository;
 import com.bugtrack.project.Project;
 import com.bugtrack.project.ProjectRepository;
@@ -24,6 +25,7 @@ public class IssueService {
     private final IssueSorter issueSorter;
     private final IssueSearchEngine issueSearchEngine;
     private final StatusStateMachine statusStateMachine;
+    private final ActivityService activityService;
 
     public IssueService(IssueRepository issueRepository,
                         ProjectRepository projectRepository,
@@ -31,7 +33,8 @@ public class IssueService {
                         MemberRepository memberRepository,
                         IssueSorter issueSorter,
                         IssueSearchEngine issueSearchEngine,
-                        StatusStateMachine statusStateMachine) {
+                        StatusStateMachine statusStateMachine,
+                        ActivityService activityService) {
         this.issueRepository = issueRepository;
         this.projectRepository = projectRepository;
         this.userRepository = userRepository;
@@ -39,6 +42,7 @@ public class IssueService {
         this.issueSorter = issueSorter;
         this.issueSearchEngine = issueSearchEngine;
         this.statusStateMachine = statusStateMachine;
+        this.activityService = activityService;
     }
 
     private User getCurrentUser() {
@@ -62,7 +66,6 @@ public class IssueService {
         User currentUser = getCurrentUser();
         Project project = getProject(projectId);
         validateMember(projectId, currentUser.getId());
-
         Issue issue = new Issue();
         issue.setTitle(body.get("title"));
         issue.setDescription(body.get("description"));
@@ -70,7 +73,9 @@ public class IssueService {
         issue.setCodeRef(body.get("codeRef"));
         issue.setProject(project);
         issue.setPostedBy(currentUser);
-        return issueRepository.save(issue);
+        Issue saved = issueRepository.save(issue);
+        activityService.logAction(projectId, currentUser.getName() + " posted issue: " + saved.getTitle());
+        return saved;
     }
 
     public List<Issue> getIssues(UUID projectId, String keyword) {
@@ -90,27 +95,35 @@ public class IssueService {
         statusStateMachine.validate(issue.getStatus(), "IN_PROGRESS");
         issue.setAssignedTo(currentUser);
         issue.setStatus("IN_PROGRESS");
-        return issueRepository.save(issue);
+        Issue saved = issueRepository.save(issue);
+        activityService.logAction(saved.getProject().getId(), currentUser.getName() + " assigned issue: " + saved.getTitle() + " to themselves");
+        return saved;
     }
 
     @Transactional
     public Issue updateStatus(UUID issueId, String newStatus) {
+        User currentUser = getCurrentUser();
         Issue issue = issueRepository.findById(issueId)
                 .orElseThrow(() -> new RuntimeException("Issue not found"));
         statusStateMachine.validate(issue.getStatus(), newStatus);
         issue.setStatus(newStatus);
-        return issueRepository.save(issue);
+        Issue saved = issueRepository.save(issue);
+        activityService.logAction(saved.getProject().getId(), currentUser.getName() + " updated status of: " + saved.getTitle() + " to " + newStatus);
+        return saved;
     }
 
     @Transactional
     public Issue resolveIssue(UUID issueId, String branchLink) {
+        User currentUser = getCurrentUser();
         Issue issue = issueRepository.findById(issueId)
                 .orElseThrow(() -> new RuntimeException("Issue not found"));
         statusStateMachine.validate(issue.getStatus(), "RESOLVED");
         issue.setBranchLink(branchLink);
         issue.setStatus("RESOLVED");
         issue.setResolvedAt(LocalDateTime.now());
-        return issueRepository.save(issue);
+        Issue saved = issueRepository.save(issue);
+        activityService.logAction(saved.getProject().getId(), currentUser.getName() + " resolved issue: " + saved.getTitle());
+        return saved;
     }
 
     public void deleteIssue(UUID issueId) {
