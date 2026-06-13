@@ -81,7 +81,7 @@ public class Project {
         }
     }
 
-    public UUID getId() { return id; }
+    public UUID getId() { return id; } 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public String getInviteCode() { return inviteCode; }
