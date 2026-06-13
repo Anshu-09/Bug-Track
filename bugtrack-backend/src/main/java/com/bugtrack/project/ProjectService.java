@@ -1,5 +1,7 @@
 package com.bugtrack.project;
 
+import com.bugtrack.member.MemberRepository;
+import com.bugtrack.member.ProjectMember;
 import com.bugtrack.user.User;
 import com.bugtrack.user.UserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,13 +16,16 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final InviteCodeGenerator inviteCodeGenerator;
+    private final MemberRepository memberRepository;
 
     public ProjectService(ProjectRepository projectRepository,
                           UserRepository userRepository,
-                          InviteCodeGenerator inviteCodeGenerator) {
+                          InviteCodeGenerator inviteCodeGenerator,
+                          MemberRepository memberRepository) {
         this.projectRepository = projectRepository;
         this.userRepository = userRepository;
         this.inviteCodeGenerator = inviteCodeGenerator;
+        this.memberRepository = memberRepository;
     }
 
     private User getCurrentUser() {
@@ -37,7 +42,12 @@ public class ProjectService {
         project.setCreatedBy(currentUser);
         Project saved = projectRepository.save(project);
         saved.setInviteCode(inviteCodeGenerator.generate(saved.getId()));
-        return projectRepository.save(saved);
+        projectRepository.save(saved);
+        ProjectMember member = new ProjectMember();
+        member.setProject(saved);
+        member.setUser(currentUser);
+        memberRepository.save(member);
+        return saved;
     }
 
     public Project getProject(UUID projectId) {
