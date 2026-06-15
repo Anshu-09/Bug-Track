@@ -42,38 +42,40 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="dashboard">
-      <div className="dashboard-header">
-        <h2>My Projects</h2>
+    <div>
+      <div className="navbar">
+        <span>🐛 Bug Track</span>
         <button onClick={handleLogout}>Logout</button>
       </div>
+      <div className="dashboard">
+        <p className="section-title">My Projects</p>
+        {error && <p className="error">{error}</p>}
 
-      {error && <p className="error">{error}</p>}
+        <div className="dashboard-forms">
+          <form onSubmit={handleCreateProject}>
+            <h3>Create Project</h3>
+            <input type="text" placeholder="Project name" value={newProjectName}
+              onChange={e => setNewProjectName(e.target.value)} required />
+            <button type="submit">Create</button>
+          </form>
 
-      <div className="dashboard-forms">
-        <form onSubmit={handleCreateProject}>
-          <h3>Create Project</h3>
-          <input type="text" placeholder="Project name" value={newProjectName}
-            onChange={e => setNewProjectName(e.target.value)} required />
-          <button type="submit">Create</button>
-        </form>
+          <form onSubmit={handleJoinProject}>
+            <h3>Join Project</h3>
+            <input type="text" placeholder="Invite code" value={inviteCode}
+              onChange={e => setInviteCode(e.target.value)} required />
+            <button type="submit">Join</button>
+          </form>
+        </div>
 
-        <form onSubmit={handleJoinProject}>
-          <h3>Join Project</h3>
-          <input type="text" placeholder="Invite code" value={inviteCode}
-            onChange={e => setInviteCode(e.target.value)} required />
-          <button type="submit">Join</button>
-        </form>
-      </div>
-
-      <div className="project-list">
-        {projects.length === 0 && <p>No projects yet. Create or join one above.</p>}
-        {projects.map(p => (
-          <div key={p.id} className="project-card" onClick={() => navigate(`/projects/${p.id}`)}>
-            <h3>{p.name}</h3>
-            <p>Invite Code: <strong>{p.inviteCode}</strong></p>
-          </div>
-        ))}
+        <div className="project-list">
+          {projects.length === 0 && <p style={{ padding: '16px', color: '#57606a' }}>No projects yet. Create or join one above.</p>}
+          {projects.map(p => (
+            <div key={p.id} className="project-card" onClick={() => navigate(`/projects/${p.id}`)}>
+              <h3>{p.name}</h3>
+              <p>Invite Code: <strong>{p.inviteCode}</strong></p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

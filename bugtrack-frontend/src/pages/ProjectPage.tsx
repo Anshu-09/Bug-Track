@@ -103,8 +103,8 @@ export default function ProjectPage() {
           {filtered.map(issue => (
             <tr key={issue.id}>
               <td>{issue.title}</td>
-              <td>{issue.severity}</td>
-              <td>{issue.status}</td>
+              <td><span className={`badge badge-${issue.severity}`}>{issue.severity}</span></td>
+              <td><span className={`badge badge-${issue.status}`}>{issue.status}</span></td>
               <td>{issue.codeRef ? <a href={issue.codeRef} target="_blank" rel="noreferrer">View</a> : '-'}</td>
               <td>{issue.assignedTo?.name || 'Unassigned'}</td>
               <td>{issue.branchLink ? <a href={issue.branchLink} target="_blank" rel="noreferrer">Branch</a> : '-'}</td>
@@ -119,7 +119,7 @@ export default function ProjectPage() {
                     <button onClick={() => handleResolve(issue.id)}>Confirm</button>
                   </span>
                 )}
-                <button onClick={() => handleDelete(issue.id)}>Delete</button>
+                <button className="btn-danger" onClick={() => handleDelete(issue.id)}>Delete</button>
               </td>
             </tr>
           ))}
