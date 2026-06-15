@@ -8,7 +8,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectService {
@@ -48,6 +52,22 @@ public class ProjectService {
         member.setUser(currentUser);
         memberRepository.save(member);
         return saved;
+    }
+
+    public List<Project> getProjectsForCurrentUser() {
+        User currentUser = getCurrentUser();
+        return memberRepository.findByUserId(currentUser.getId())
+                .stream()
+                .map(m -> m.getProject())
+                .collect(Collectors.toList());
+    }
+
+    public List<Project> getProjectsForCurrentUser() {
+        User currentUser = getCurrentUser();
+        return memberRepository.findByUserId(currentUser.getId())
+                .stream()
+                .map(m -> m.getProject())
+                .collect(Collectors.toList());
     }
 
     public Project getProject(UUID projectId) {

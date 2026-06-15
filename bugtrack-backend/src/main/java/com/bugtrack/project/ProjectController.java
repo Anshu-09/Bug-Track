@@ -3,6 +3,7 @@ package com.bugtrack.project;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -14,6 +15,11 @@ public class ProjectController {
 
     public ProjectController(ProjectService projectService) {
         this.projectService = projectService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Project>> getMyProjects() {
+        return ResponseEntity.ok(projectService.getProjectsForCurrentUser());
     }
 
     @PostMapping
