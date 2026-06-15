@@ -1,1 +1,10 @@
+# Maven build output
+bugtrack-backend/target/
+
+# Local only files
+building_knowledge.md
 steps_next.md
+md
+
+# Frontend
+bugtrack-frontend/node_modules/
