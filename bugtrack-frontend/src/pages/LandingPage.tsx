@@ -8,7 +8,21 @@ export default function LandingPage() {
 
       {/* Navbar */}
       <nav className="landing-nav">
-        <span className="landing-logo">🐛 Bug Track</span>
+        <span className="landing-logo">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{marginRight: '8px', verticalAlign: 'middle'}}>
+            <circle cx="12" cy="13" r="6" fill="#2da44e"/>
+            <ellipse cx="12" cy="10" rx="3" ry="2" fill="#2da44e"/>
+            <line x1="8" y1="8" x2="5" y2="5" stroke="#2da44e" strokeWidth="1.5" strokeLinecap="round"/>
+            <line x1="16" y1="8" x2="19" y2="5" stroke="#2da44e" strokeWidth="1.5" strokeLinecap="round"/>
+            <line x1="6" y1="12" x2="3" y2="11" stroke="#2da44e" strokeWidth="1.5" strokeLinecap="round"/>
+            <line x1="18" y1="12" x2="21" y2="11" stroke="#2da44e" strokeWidth="1.5" strokeLinecap="round"/>
+            <line x1="6" y1="15" x2="3" y2="16" stroke="#2da44e" strokeWidth="1.5" strokeLinecap="round"/>
+            <line x1="18" y1="15" x2="21" y2="16" stroke="#2da44e" strokeWidth="1.5" strokeLinecap="round"/>
+            <circle cx="10" cy="13" r="1" fill="white"/>
+            <circle cx="14" cy="13" r="1" fill="white"/>
+          </svg>
+          Bug Track
+        </span>
         <div className="landing-nav-links">
           <button className="btn-secondary" onClick={() => navigate('/login')}>Login</button>
           <button onClick={() => navigate('/register')}>Get Started</button>
